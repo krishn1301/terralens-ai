@@ -1,0 +1,112 @@
+[
+  {
+    "id": "fao-cover-crops",
+    "organization": "Food and Agriculture Organization of the United Nations",
+    "title": "Soil organic cover - Conservation Agriculture",
+    "year": 2025,
+    "url": "https://www.fao.org/conservation-agriculture/in-practice/soil-organic-cover/en/",
+    "claim": "Cover crops protect soil during fallow periods, recycle nutrients, improve structure, interrupt monoculture, and increase agroecosystem biodiversity; in semi-arid systems they should use residual soil moisture.",
+    "metrics": ["soil_organic_carbon", "soil_moisture_pct", "habitat_diversity"],
+    "interventions": ["cover crops", "crop rotation", "residue retention"],
+    "conditions": ["cropland", "monoculture", "semi-arid", "low carbon"]
+  },
+  {
+    "id": "ipcc-soil-carbon",
+    "organization": "Intergovernmental Panel on Climate Change",
+    "title": "AR6 WGIII Chapter 7: Agriculture, Forestry and Other Land Uses",
+    "year": 2022,
+    "url": "https://www.ipcc.ch/report/ar6/wg3/chapter/chapter-7/",
+    "claim": "Increasing cropland soil organic matter can combine cover crops, crop rotation, agroforestry, organic amendments, reduced tillage, residue retention, and water management suited to arid conditions.",
+    "metrics": ["soil_organic_carbon", "soil_moisture_pct", "annual_rainfall_mm"],
+    "interventions": ["cover crops", "reduced tillage", "organic amendments", "agroforestry"],
+    "conditions": ["cropland", "low carbon", "arid", "semi-arid"]
+  },
+  {
+    "id": "ipcc-agroforestry-resilience",
+    "organization": "Intergovernmental Panel on Climate Change",
+    "title": "AR6 WGII Chapter 5: Food, Fibre and Other Ecosystem Products",
+    "year": 2022,
+    "url": "https://www.ipcc.ch/report/ar6/wg2/chapter/chapter-5/",
+    "claim": "Agroforestry, polycultures, and hedgerows have robust co-benefits for biodiversity, carbon storage, and ecosystem services; a cited meta-analysis found roughly one-third higher soil carbon after conversion to agroforestry.",
+    "metrics": ["soil_organic_carbon", "habitat_diversity", "species_richness", "soil_moisture_pct"],
+    "interventions": ["agroforestry", "hedgerows", "polyculture"],
+    "conditions": ["cropland", "monoculture", "semi-arid", "heat stress"]
+  },
+  {
+    "id": "ipbes-connectivity",
+    "organization": "Intergovernmental Science-Policy Platform on Biodiversity and Ecosystem Services",
+    "title": "IPBES Core Glossary: Habitat Connectivity and Fragmentation",
+    "year": 2018,
+    "url": "https://files.ipbes.net/ipbes-web-prod-public-files/ipbes-6-inf-4-rev.1.pdf",
+    "claim": "Fragmentation divides continuous habitat into smaller isolated patches, while connectivity enables movement of organisms, pollen, propagules, nutrients, and moisture between habitats.",
+    "metrics": ["fragmentation_pct", "habitat_diversity", "species_richness"],
+    "interventions": ["habitat corridors", "stepping-stone habitat", "hedgerows"],
+    "conditions": ["fragmented", "isolated habitat", "agriculture", "urban edge"]
+  },
+  {
+    "id": "usda-riparian-buffer",
+    "organization": "USDA Natural Resources Conservation Service",
+    "title": "Riparian Forest Buffer",
+    "year": 2025,
+    "url": "https://www.nrcs.usda.gov/conservation-basics/land/forests/agroforestry-systems/riparian-forest-buffer",
+    "claim": "Riparian tree and shrub corridors trap harmful chemicals and sediment, protect stream soils, and provide shade, detritus, and woody habitat; typical functional widths are about 15 to 100 feet and must match site conditions.",
+    "metrics": ["pollution_level", "species_richness", "habitat_diversity", "soil_moisture_pct"],
+    "interventions": ["riparian buffer", "native trees", "streambank protection"],
+    "conditions": ["waterway", "runoff", "pollution", "erosion"]
+  },
+  {
+    "id": "usda-buffer-nitrogen",
+    "organization": "USDA Natural Resources Conservation Service",
+    "title": "Plants for Riparian Buffers",
+    "year": 2011,
+    "url": "https://www.nrcs.usda.gov/plantmaterials/idpmcbr10757.pdf",
+    "claim": "Riparian vegetation can remove up to 90 percent of unused nitrogen from cropland runoff; wider, diverse buffers also improve fish and wildlife habitat and corridor value.",
+    "metrics": ["pollution_level", "species_richness", "habitat_diversity"],
+    "interventions": ["riparian buffer", "native grasses", "native shrubs"],
+    "conditions": ["cropland runoff", "nutrient pollution", "stream", "fragmented"]
+  },
+  {
+    "id": "fao-acid-soils",
+    "organization": "Food and Agriculture Organization of the United Nations",
+    "title": "Management of Acid Soils",
+    "year": 2025,
+    "url": "https://www.fao.org/soils-portal/soil-management/management-of-some-problem-soils/acid-soils/en/",
+    "claim": "Soils below pH 5.5 can create aluminium toxicity and nutrient deficiency; site-specific liming, acid-tolerant species, crop rotation, diversification, and adequate water management form an integrated response.",
+    "metrics": ["soil_ph", "species_richness", "soil_moisture_pct"],
+    "interventions": ["soil test and lime", "acid-tolerant species", "crop diversification"],
+    "conditions": ["acid soil", "low ph", "humid", "nutrient deficiency"]
+  },
+  {
+    "id": "fao-soil-biodiversity",
+    "organization": "Food and Agriculture Organization of the United Nations",
+    "title": "State of Knowledge of Soil Biodiversity",
+    "year": 2020,
+    "url": "https://www.fao.org/interactive/soil-biodiversity/en/",
+    "claim": "Soil organisms underpin nutrient cycling, water filtration, carbon sequestration, contaminant degradation, soil structure, and plant health, so soil and above-ground biodiversity interventions should be evaluated together.",
+    "metrics": ["soil_organic_carbon", "soil_moisture_pct", "species_richness", "pollution_level"],
+    "interventions": ["organic amendments", "reduced disturbance", "diverse planting"],
+    "conditions": ["degraded soil", "low biodiversity", "pollution", "cropland"]
+  },
+  {
+    "id": "usda-riparian-connectivity",
+    "organization": "USDA Forest Service",
+    "title": "Riparian Forest Buffers",
+    "year": 2025,
+    "url": "https://research.fs.usda.gov/centers/nac/riparianforestbuffers",
+    "claim": "Riparian buffers filter nutrients, pesticides, animal waste, and sediment while stabilizing banks and creating terrestrial wildlife habitat and movement corridors.",
+    "metrics": ["pollution_level", "fragmentation_pct", "species_richness"],
+    "interventions": ["riparian buffer", "wildlife corridor", "bank stabilization"],
+    "conditions": ["agriculture", "stream", "pollution", "fragmented"]
+  },
+  {
+    "id": "fao-agroforestry-functions",
+    "organization": "Food and Agriculture Organization of the United Nations",
+    "title": "Agroforestry uptake and multifunctional benefits",
+    "year": 2024,
+    "url": "https://www.fao.org/americas/priorities/agricultura-sostenible/agrofesteria/publication-agroforestry-uptake--tactics-that-smallholder-farmers-use-to-overcome-barriers-to-adoption/en",
+    "claim": "Agroforestry restores soil ecological functions, promotes biodiversity, regulates water, and reduces vulnerability to drought, pests, and disease through functional diversity.",
+    "metrics": ["soil_organic_carbon", "soil_moisture_pct", "habitat_diversity", "species_richness"],
+    "interventions": ["agroforestry", "native multipurpose trees", "diverse understory"],
+    "conditions": ["smallholder", "degraded land", "drought", "monoculture"]
+  }
+]
