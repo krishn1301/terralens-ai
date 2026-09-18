@@ -12,6 +12,18 @@ def test_health_reports_knowledge_ready():
     assert response.json()["evidence_records"] >= 8
 
 
+def test_cors_allows_loopback_development_origin():
+    response = client.options(
+        "/api/scenarios",
+        headers={
+            "Origin": "http://127.0.0.1:5173",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5173"
+
+
 def test_scenarios_include_semi_arid_example():
     response = client.get("/api/scenarios")
     assert response.status_code == 200

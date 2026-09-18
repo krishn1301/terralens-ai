@@ -23,7 +23,7 @@
   --surface-2: #e2e6d8;
   --ink: #17382d;
   --ink-2: #3f554d;
-  --ink-3: #66756e;
+  --ink-3: #506159;
   --line: #c7ccbc;
   --accent: #b5cf4a;
   --accent-ink: #26320d;
@@ -119,8 +119,7 @@ a { color: inherit; }
 }
 
 .composer {
-  position: sticky;
-  bottom: 0;
+  position: static;
   z-index: 4;
   max-width: var(--content-measure);
   margin-inline: auto;
@@ -190,7 +189,7 @@ a { color: inherit; }
   letter-spacing: -0.035em;
 }
 
-.scenario-rail .lede { margin-block-end: var(--space-xl); color: rgb(248 246 238 / 72%); }
+.scenario-rail .lede { margin-block-end: var(--space-xl); color: rgb(248 246 238 / 78%); }
 
 .section-label {
   display: flex;
@@ -200,7 +199,8 @@ a { color: inherit; }
   color: var(--ink-3);
 }
 
-.scenario-rail .section-label { color: rgb(248 246 238 / 55%); }
+.scenario-rail .eyebrow,
+.scenario-rail .section-label { color: rgb(248 246 238 / 72%); }
 
 .pulse { margin-block-end: var(--space-xl); }
 .pulse ol, .scenario-list, .evidence-list, .impact-list { margin: 0; padding: 0; list-style: none; }
@@ -212,7 +212,7 @@ a { color: inherit; }
   gap: var(--space-2xs);
   align-items: center;
   min-height: var(--space-l);
-  color: rgb(248 246 238 / 46%);
+  color: rgb(248 246 238 / 68%);
   font-size: var(--step--1);
 }
 
@@ -263,8 +263,8 @@ a { color: inherit; }
 .scenario-button:active { transform: translateY(var(--space-3xs)); }
 .scenario-button strong, .scenario-button small { display: block; }
 .scenario-button strong { font-size: var(--step-0); }
-.scenario-button small { margin-block-start: var(--space-2xs); color: rgb(248 246 238 / 60%); line-height: 1.4; }
-.scenario-index { color: rgb(248 246 238 / 40%); font-family: var(--font-mono); font-size: var(--step--1); }
+.scenario-button small { margin-block-start: var(--space-2xs); color: rgb(248 246 238 / 72%); line-height: 1.4; }
+.scenario-index { color: rgb(248 246 238 / 68%); font-family: var(--font-mono); font-size: var(--step--1); }
 .scenario-skeleton { height: var(--space-2xl); background: rgb(248 246 238 / 8%); animation: pulse-load var(--dur-slow) var(--ease) infinite alternate; }
 
 @keyframes pulse-load { to { opacity: 0.45; } }

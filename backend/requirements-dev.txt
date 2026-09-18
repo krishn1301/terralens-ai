@@ -2,5 +2,5 @@
 httpx==0.28.1
 pytest==8.4.1
 pytest-cov==6.2.1
+playwright==1.55.0
 ruff==0.12.7
-
