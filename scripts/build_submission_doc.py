@@ -8,8 +8,8 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 
 ROOT = Path(__file__).parents[1]
-LIVE_URL = "https://hmkz0x00.github.io/terralens-ai/"
-REPO_URL = "https://github.com/Hmkz0x00/terralens-ai"
+LIVE_URL = "https://krishn1301.github.io/terralens-ai/"
+REPO_URL = "https://github.com/krishn1301/terralens-ai"
 API_URL = "https://terralens-ai-api.onrender.com"
 DOCS_URL = f"{API_URL}/docs"
 OUTPUT = ROOT / "submission" / "TerraLens_AI_Submission.docx"

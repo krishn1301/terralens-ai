@@ -6,10 +6,10 @@ The default experience requires no paid API key and no credentials.
 
 | | |
 |---|---|
-| Live demo | https://hmkz0x00.github.io/terralens-ai/ |
+| Live demo | https://krishn1301.github.io/terralens-ai/ |
 | Backend API | https://terralens-ai-api.onrender.com |
 | API documentation | https://terralens-ai-api.onrender.com/docs |
-| Repository | https://github.com/Hmkz0x00/terralens-ai |
+| Repository | https://github.com/krishn1301/terralens-ai |
 
 > The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after a pause can take up to a minute while it wakes; the interface keeps your inputs and asks you to retry if that request times out. Opening the API health URL first warms it up.
 
@@ -90,7 +90,7 @@ See `.env.example`. All variables are optional and none are secrets.
 
 | Variable | Read by | Purpose |
 |---|---|---|
-| `TERRALENS_CORS_ORIGINS` | Backend at startup | Comma-separated extra browser origins. Localhost development origins are always allowed; `*` and non-HTTP values are ignored. Production value: `https://hmkz0x00.github.io`. |
+| `TERRALENS_CORS_ORIGINS` | Backend at startup | Comma-separated extra browser origins. Localhost development origins are always allowed; `*` and non-HTTP values are ignored. Production value: `https://krishn1301.github.io`. |
 | `PORT` | Backend container | Port Uvicorn binds to. Render injects it; defaults to `8000`. |
 | `VITE_API_URL` | Frontend build | Public backend URL. Defaults to `http://localhost:8000`. |
 | `VITE_BASE_PATH` | Frontend build | Sub-path the site is served from. `/terralens-ai/` on GitHub Pages, `/` elsewhere. |
@@ -133,14 +133,14 @@ The integrated browser script in `tests/e2e.py` needs Playwright's Chromium (`.v
 .venv/Scripts/python tests/e2e.py
 
 # Against the public deployment
-TERRALENS_E2E_URL=https://hmkz0x00.github.io/terralens-ai/ .venv/Scripts/python tests/e2e.py
+TERRALENS_E2E_URL=https://krishn1301.github.io/terralens-ai/ .venv/Scripts/python tests/e2e.py
 ```
 
 ## Deployment
 
 ```mermaid
 flowchart LR
-  B[Browser] -->|static assets| P["GitHub Pages<br/>hmkz0x00.github.io/terralens-ai"]
+  B[Browser] -->|static assets| P["GitHub Pages<br/>krishn1301.github.io/terralens-ai"]
   B -->|HTTPS JSON, CORS allowlist| R["Render free web service<br/>terralens-ai-api.onrender.com"]
   R --> C["Docker: FastAPI + in-memory SQLite FTS5"]
   G[GitHub main branch] -->|pages.yml| P
@@ -171,7 +171,7 @@ The seed corpus in `backend/data/evidence.json` contains structured records from
 
 No login or API key is needed. Optionally open https://terralens-ai-api.onrender.com/api/health first to wake the API.
 
-1. Open https://hmkz0x00.github.io/terralens-ai/ and choose the semi-arid wheat farm.
+1. Open https://krishn1301.github.io/terralens-ai/ and choose the semi-arid wheat farm.
 2. Note that carbon, rainfall, land use, habitat, fragmentation, and pollution are evaluated together.
 3. Run the grounded assessment.
 4. Expand the reasoning trace and open an IPCC or FAO citation.

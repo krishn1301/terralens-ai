@@ -1,7 +1,7 @@
 """Integrated browser, responsive, keyboard, and accessibility verification.
 
 Targets the local dev server by default. Set TERRALENS_E2E_URL to verify a deployment, e.g.
-TERRALENS_E2E_URL=https://hmkz0x00.github.io/terralens-ai/ python tests/e2e.py
+TERRALENS_E2E_URL=https://krishn1301.github.io/terralens-ai/ python tests/e2e.py
 """
 
 import json
