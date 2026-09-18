@@ -140,9 +140,9 @@ TERRALENS_E2E_URL=https://hmkz0x00.github.io/terralens-ai/ .venv/Scripts/python 
 
 ```mermaid
 flowchart LR
-  B[Browser] -->|static assets| P[GitHub Pages<br/>hmkz0x00.github.io/terralens-ai]
-  B -->|HTTPS JSON, CORS allowlist| R[Render free web service<br/>terralens-ai-api.onrender.com]
-  R --> C[Docker: FastAPI + in-memory SQLite FTS5]
+  B[Browser] -->|static assets| P["GitHub Pages<br/>hmkz0x00.github.io/terralens-ai"]
+  B -->|HTTPS JSON, CORS allowlist| R["Render free web service<br/>terralens-ai-api.onrender.com"]
+  R --> C["Docker: FastAPI + in-memory SQLite FTS5"]
   G[GitHub main branch] -->|pages.yml| P
   G -->|render.yaml auto-deploy| R
 ```

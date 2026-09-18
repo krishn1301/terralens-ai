@@ -15,3 +15,10 @@ frontend/vite.config.d.ts
 outputs/
 work/
 submission/rendered/
+.env.*
+!.env.example
+*.log
+.ruff_cache/
+node_modules/
+screenshots/
+submission/*.pdf
