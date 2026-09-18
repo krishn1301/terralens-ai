@@ -98,3 +98,16 @@ class KnowledgeStore:
 
     def raw(self, evidence_id: str) -> dict:
         return self.by_id[evidence_id]
+
+    def get(self, evidence_id: str, relevance: float = 0.95) -> Evidence:
+        record = self.raw(evidence_id)
+        return Evidence(
+            id=record["id"],
+            organization=record["organization"],
+            title=record["title"],
+            year=record["year"],
+            url=record["url"],
+            claim=record["claim"],
+            metrics=record["metrics"],
+            relevance=relevance,
+        )
