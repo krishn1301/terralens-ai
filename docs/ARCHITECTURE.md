@@ -32,6 +32,17 @@ Every chat response includes a session ID. Follow-up profiles are merged field b
 
 Pydantic returns field-level validation for impossible values. The client preserves drafts on network errors and offers retry. Missing sample scenarios do not block manual use. Empty evidence produces no unsupported numeric claim. Request IDs are returned for service diagnostics.
 
+## Deployment
+
+The public demo runs as two independently deployed parts:
+
+- **Frontend**: https://hmkz0x00.github.io/terralens-ai/ on GitHub Pages, built by `.github/workflows/pages.yml` with `VITE_API_URL` from a repository variable and `VITE_BASE_PATH=/terralens-ai/`.
+- **Backend**: https://terralens-ai-api.onrender.com (documentation at `/docs`) on a free Render Docker web service defined by `render.yaml`. The container runs as a non-root user and binds Uvicorn to the platform-supplied `PORT` with proxy headers enabled.
+
+CORS allows the localhost development origins plus the comma-separated origins in `TERRALENS_CORS_ORIGINS` (production: `https://hmkz0x00.github.io`). Wildcards are ignored, credentials are not allowed, and only `GET`, `POST`, `DELETE`, and `OPTIONS` are permitted. Unexpected exceptions are logged by type and path only and return a generic JSON 500 response.
+
+The evidence index is rebuilt in memory at each start, so SQLite FTS5 needs no persistent disk. The free instance sleeps after inactivity; the first request afterwards can take up to a minute, and in-memory sessions do not survive a sleep or redeploy. The client reports an unreachable API as a recoverable error and keeps the reviewer's inputs.
+
 ## Production path
 
 For deployment, move sessions to Redis or PostgreSQL, persist the evidence index, add authentication and rate limits, and schedule source review. A semantic embedding adapter can be introduced behind `KnowledgeStore`, while the deterministic reasoning layer continues to prevent unsupported claims.

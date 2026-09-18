@@ -2,7 +2,16 @@
 
 TerraLens AI is an evidence-grounded biodiversity intelligence workspace. It asks for missing field context, retrieves traceable environmental evidence, reasons across interacting metrics, and returns measurable interventions with confidence, time horizon, caveats, and source provenance.
 
-The default experience is fully local and requires no paid API key.
+The default experience requires no paid API key and no credentials.
+
+| | |
+|---|---|
+| Live demo | https://hmkz0x00.github.io/terralens-ai/ |
+| Backend API | https://terralens-ai-api.onrender.com |
+| API documentation | https://terralens-ai-api.onrender.com/docs |
+| Repository | https://github.com/Hmkz0x00/terralens-ai |
+
+> The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. The first request after a pause can take up to a minute while it wakes; the interface keeps your inputs and asks you to retry if that request times out. Opening the API health URL first warms it up.
 
 ## What the reviewer can demonstrate
 
@@ -28,6 +37,17 @@ flowchart LR
 The browser sends free text and an optional `LandscapeProfile`. The API merges new values into the conversation session. If the combined profile has fewer than three variables, the engine returns a targeted clarification. Otherwise, it evaluates compound stressors, selects guarded intervention rules, resolves their evidence records, and builds a structured assessment. Numeric benchmarks are emitted only when the corresponding evidence record supports them.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the schema, retrieval details, confidence method, and design boundaries.
+
+## Technology stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, lucide-react icons |
+| Backend | Python 3.12, FastAPI, Pydantic, Uvicorn |
+| Retrieval | SQLite FTS5 (Porter stemming) over a curated JSON evidence corpus |
+| Reasoning | Deterministic multi-metric rule engine with evidence-linked confidence |
+| Testing | pytest, Ruff, Vitest, Testing Library, ESLint, Playwright with axe-core |
+| Delivery | Docker, Docker Compose, GitHub Actions, GitHub Pages, Render |
 
 ## Quick start
 
@@ -62,7 +82,19 @@ Run the client from `frontend`:
 pnpm dev
 ```
 
-No environment variables are required. `OPENAI_API_KEY` is reserved for a future optional language adapter; evidence retrieval and recommendations never depend on it.
+No environment variables are required for local use.
+
+## Environment variables
+
+See `.env.example`. All variables are optional and none are secrets.
+
+| Variable | Read by | Purpose |
+|---|---|---|
+| `TERRALENS_CORS_ORIGINS` | Backend at startup | Comma-separated extra browser origins. Localhost development origins are always allowed; `*` and non-HTTP values are ignored. Production value: `https://hmkz0x00.github.io`. |
+| `PORT` | Backend container | Port Uvicorn binds to. Render injects it; defaults to `8000`. |
+| `VITE_API_URL` | Frontend build | Public backend URL. Defaults to `http://localhost:8000`. |
+| `VITE_BASE_PATH` | Frontend build | Sub-path the site is served from. `/terralens-ai/` on GitHub Pages, `/` elsewhere. |
+| `OPENAI_API_KEY` | Nothing yet | Reserved for a future optional language adapter. Retrieval and recommendations never depend on it. |
 
 ## API example
 
@@ -74,6 +106,7 @@ curl -X POST http://localhost:8000/api/chat \
 
 | Route | Purpose |
 |---|---|
+| `GET /docs` | Interactive OpenAPI documentation |
 | `GET /api/health` | Readiness and indexed record count |
 | `GET /api/scenarios` | Reviewer-ready sample landscapes |
 | `POST /api/chat` | Clarification or grounded assessment |
@@ -93,11 +126,33 @@ pnpm run lint
 pnpm run build
 ```
 
-The integrated browser script in `tests/e2e.py` verifies the live backend and frontend at desktop and mobile widths, the sample assessment, recovery from an API failure, keyboard focus visibility, horizontal overflow, and serious or critical axe accessibility violations.
+The integrated browser script in `tests/e2e.py` needs Playwright's Chromium (`.venv/Scripts/python -m playwright install chromium`). It checks, at desktop (1440×900) and mobile (390×844) widths: the sample assessment, a clarification followed by a follow-up turn in the same session, evidence links, the reasoning trace and caveats, recovery from HTTP 503 and from an unreachable API, keyboard focus visibility, horizontal overflow, failed network requests, console errors, and serious or critical axe accessibility violations.
 
-## CI and deployment
+```bash
+# Against local servers (API on :8000, pnpm dev on :5173)
+.venv/Scripts/python tests/e2e.py
 
-GitHub Actions runs backend tests and lint plus frontend unit tests, lint, and a production build. Both services have Dockerfiles, and `docker-compose.yml` provides a one-command reviewer environment. The frontend accepts `VITE_API_URL` at build time for deployment to any static host while the API can run on a standard container service.
+# Against the public deployment
+TERRALENS_E2E_URL=https://hmkz0x00.github.io/terralens-ai/ .venv/Scripts/python tests/e2e.py
+```
+
+## Deployment
+
+```mermaid
+flowchart LR
+  B[Browser] -->|static assets| P[GitHub Pages<br/>hmkz0x00.github.io/terralens-ai]
+  B -->|HTTPS JSON, CORS allowlist| R[Render free web service<br/>terralens-ai-api.onrender.com]
+  R --> C[Docker: FastAPI + in-memory SQLite FTS5]
+  G[GitHub main branch] -->|pages.yml| P
+  G -->|render.yaml auto-deploy| R
+```
+
+- **CI** (`.github/workflows/ci.yml`) runs backend tests and Ruff plus frontend tests, lint, and a production build on every push.
+- **Frontend** (`.github/workflows/pages.yml`) builds on each push to `main` with `VITE_API_URL` taken from the repository variable of the same name and `VITE_BASE_PATH=/terralens-ai/`, then publishes to GitHub Pages. The workflow fails early if the variable is missing.
+- **Backend** (`render.yaml`) is a Render Blueprint for a free Docker web service built from `backend/Dockerfile`. It runs as a non-root user, binds to Render's `PORT`, uses `/api/health` as its health check, sets `TERRALENS_CORS_ORIGINS`, and redeploys automatically on pushes to `main`.
+- Unexpected server errors return a generic JSON message; stack traces and inputs are never included in responses.
+
+To deploy your own copy: create the Render service from the Blueprint (`https://render.com/deploy?repo=<your repo URL>`), set the repository variable `VITE_API_URL` to its URL, enable Pages with source "GitHub Actions", and update `TERRALENS_CORS_ORIGINS` in `render.yaml` to your Pages origin.
 
 ## Evidence provenance
 
@@ -106,15 +161,20 @@ The seed corpus in `backend/data/evidence.json` contains structured records from
 ## Known limits
 
 - The evidence corpus is deliberately small and curated for a reviewer demo; it is not a global ecological knowledge base.
-- Session memory is process-local and bounded to 200 recent sessions.
+- Session memory is process-local and bounded to 200 recent sessions. On the hosted demo, sessions are also lost whenever the free instance sleeps or redeploys.
+- The hosted API runs on a free tier with a cold start of up to about a minute after inactivity.
 - Impact ranges are planning benchmarks, not predictions for a specific site.
 - Species selection and planting calendars require local ecological validation.
 - Production deployment should add durable storage, authentication, observability, and scheduled evidence review.
 
 ## Five-minute reviewer script
 
-1. Open the semi-arid wheat farm.
+No login or API key is needed. Optionally open https://terralens-ai-api.onrender.com/api/health first to wake the API.
+
+1. Open https://hmkz0x00.github.io/terralens-ai/ and choose the semi-arid wheat farm.
 2. Note that carbon, rainfall, land use, habitat, fragmentation, and pollution are evaluated together.
 3. Run the grounded assessment.
 4. Expand the reasoning trace and open an IPCC or FAO citation.
-5. Start a new case with only land use; observe the targeted clarification instead of a generic answer.
+5. Select **New case**, enter only a land use, and run it: the assistant asks for the specific missing variables instead of giving a generic answer.
+6. Fill in the requested values and run again. The follow-up continues the same session and returns a full assessment.
+7. Open https://terralens-ai-api.onrender.com/docs to try the API directly.

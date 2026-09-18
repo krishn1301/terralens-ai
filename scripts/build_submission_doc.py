@@ -8,6 +8,10 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 
 ROOT = Path(__file__).parents[1]
+LIVE_URL = "https://hmkz0x00.github.io/terralens-ai/"
+REPO_URL = "https://github.com/Hmkz0x00/terralens-ai"
+API_URL = "https://terralens-ai-api.onrender.com"
+DOCS_URL = f"{API_URL}/docs"
 OUTPUT = ROOT / "submission" / "TerraLens_AI_Submission.docx"
 GREEN = "17382D"
 PALE = "E7EBDD"
@@ -78,6 +82,27 @@ def style_table(table, widths):
                 set_cell_shading(cell, PALE)
 
 
+def add_hyperlink(paragraph, url):
+    relationship = paragraph.part.relate_to(
+        url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True
+    )
+    link = OxmlElement("w:hyperlink")
+    link.set(qn("r:id"), relationship)
+    run = OxmlElement("w:r")
+    properties = OxmlElement("w:rPr")
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), "1F5C45")
+    underline = OxmlElement("w:u")
+    underline.set(qn("w:val"), "single")
+    properties.extend([color, underline])
+    run.append(properties)
+    text = OxmlElement("w:t")
+    text.text = url
+    run.append(text)
+    link.append(run)
+    paragraph._p.append(link)
+
+
 def add_table(doc, headers, rows, widths):
     table = doc.add_table(rows=1, cols=len(headers))
     table.style = "Table Grid"
@@ -86,8 +111,17 @@ def add_table(doc, headers, rows, widths):
     for values in rows:
         cells = table.add_row().cells
         for index, value in enumerate(values):
-            cells[index].text = value
+            if value.startswith("https://"):
+                add_hyperlink(cells[index].paragraphs[0], value)
+            else:
+                cells[index].text = value
     style_table(table, widths)
+    # Tables are short: keep each one on a single page so a heading and header
+    # row are never stranded at the bottom of a page.
+    for row in table.rows[:-1]:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                paragraph.paragraph_format.keep_with_next = True
     doc.add_paragraph()
     return table
 
@@ -133,7 +167,7 @@ def build():
     intro = doc.add_paragraph()
     intro.add_run("Submission summary. ").bold = True
     intro.add_run(
-        "TerraLens AI is a completed, locally runnable full stack prototype that retrieves indexed "
+        "TerraLens AI is a completed, publicly deployed full stack prototype that retrieves indexed "
         "environmental evidence and reasons across soil, water, climate, habitat, biodiversity, and "
         "human pressure. It returns measurable recommendations with explicit sources, confidence, "
         "time horizons, caveats, and a visible reasoning trace."
@@ -142,17 +176,24 @@ def build():
     doc.add_heading("Submission links and access", level=1)
     add_table(
         doc,
-        ["Item", "Status and reviewer instruction"],
+        ["Item", "Link or reviewer instruction"],
         [
-            ("GitHub repository", "Public repository publication pending. The verified local repository is E:\\Codes\\TerraLens-AI."),
-            ("Live demo", "Deployment pending. Run the complete application locally with docker compose up --build."),
-            ("Credentials", "None required. The default retrieval and reasoning path works without an API key."),
-            ("API documentation", "After startup, open http://localhost:8000/docs."),
+            ("Live demo", LIVE_URL),
+            ("GitHub repository", REPO_URL),
+            ("API documentation", DOCS_URL),
+            ("Backend API", API_URL),
+            ("Credentials", "None required. No login, account, or API key is needed to use the demo or the API."),
         ],
         [Inches(1.55), Inches(5.1)],
     )
-    paragraph = doc.add_paragraph()
-    paragraph.add_run("Before portal submission, replace the publication statuses above with the final GitHub and live demo URLs.").bold = True
+    note = doc.add_paragraph()
+    note.add_run("Reviewer note. ").bold = True
+    note.add_run(
+        "The API runs on Render's free tier, which sleeps after about 15 minutes without traffic. "
+        "The first request after a pause can take up to a minute. Opening "
+        f"{API_URL}/api/health first wakes it; if a request times out, the interface keeps all inputs "
+        "and the reviewer can simply run the assessment again."
+    )
 
     doc.add_heading("Project overview", level=1)
     add_bullets(
@@ -219,13 +260,13 @@ def build():
     doc.add_heading("Local setup", level=1)
     doc.add_paragraph("Recommended prerequisites are Python 3.12, Node.js 22 or newer, pnpm, and Docker Desktop if using containers.")
     steps = [
-        "Open a terminal in E:\\Codes\\TerraLens-AI.",
+        f"Clone {REPO_URL} and open a terminal in the repository folder.",
         "Run docker compose up --build.",
         "Open http://localhost:4173 for the application.",
         "Open http://localhost:8000/docs for interactive API documentation.",
         "Choose Semi-arid wheat farm and select Run grounded assessment.",
     ]
-    for index, text in enumerate(steps, 1):
+    for text in steps:
         paragraph = doc.add_paragraph(style="List Number")
         paragraph.add_run(text)
 
@@ -248,19 +289,26 @@ def build():
         doc,
         ["Quality gate", "Verified result"],
         [
-            ("Backend", "21 pytest cases passed; Ruff reported all checks passed."),
-            ("Frontend", "4 Vitest cases passed; TypeScript compilation and ESLint completed without errors."),
+            ("Backend", "26 pytest cases passed; Ruff reported all checks passed."),
+            ("Frontend", "7 Vitest cases passed; TypeScript compilation and ESLint completed without errors."),
             ("Production build", "Vite created the optimized production bundle."),
-            ("Browser workflow", "Live semi-arid assessment and recoverable API failure paths passed."),
+            ("Deployed API", "Health, scenarios, documentation, clarification, merged follow-up assessment, invalid input rejection, session reset, and the CORS allowlist were verified over HTTPS."),
+            ("Browser workflow", "On the live demo and locally: sample assessment, clarification then multi-turn follow-up, evidence links, reasoning trace, and recovery from HTTP 503 and an unreachable API passed with no console errors or failed requests."),
             ("Accessibility", "No serious or critical axe violations; keyboard focus remained visible."),
             ("Responsive layout", "No horizontal overflow at 1440 by 900 or 390 by 844."),
+            ("Continuous integration", "GitHub Actions CI and the GitHub Pages deployment passed on the final commit."),
         ],
         [Inches(1.6), Inches(5.05)],
     )
 
     doc.add_heading("CI and deployment", level=1)
     doc.add_paragraph(
-        "The GitHub Actions workflow installs pinned dependencies, runs backend tests and lint, runs frontend unit tests and lint, and creates a production build. Separate backend and frontend Dockerfiles support container deployment, while Docker Compose provides the fastest reviewer path. The frontend API base URL is configurable at build time."
+        "GitHub Actions runs backend tests and lint, frontend unit tests and lint, and a production build on every push. "
+        "A second workflow builds the frontend with the production API URL and publishes it to GitHub Pages. "
+        "The backend is a Render Blueprint (render.yaml) for a free Docker web service that runs as a non-root user, "
+        "binds to the platform port, and redeploys automatically from the main branch. CORS allows only the GitHub Pages "
+        "origin and local development origins, and unexpected server errors return a generic message without internal details. "
+        "Docker Compose remains the fastest local reviewer path."
     )
 
     doc.add_heading("Important limitations", level=1)
@@ -270,14 +318,15 @@ def build():
             "The curated corpus is intentionally compact and should be expanded and periodically reviewed for production use.",
             "Impact ranges are planning benchmarks, not site-specific predictions.",
             "Local species selection and implementation timing require regional ecological validation.",
-            "Sessions are held in process memory; production use should move them to durable storage.",
+            "Sessions are held in process memory; on the free hosted tier they reset when the service sleeps or redeploys.",
+            "The free hosting tier adds a cold start of up to about a minute after inactivity.",
             "Production deployment should add authentication, rate limiting, observability, and managed backups.",
         ],
     )
 
     doc.add_heading("Reviewer path", level=1)
     doc.add_paragraph(
-        "Run the semi-arid case, inspect the compound recommendations and their metric impacts, expand the reasoning trace, and open an IPCC or FAO source. Then start a new case with only land use to verify that the system asks a targeted clarification instead of producing an unsupported generic answer."
+        f"Open {LIVE_URL}. Run the semi-arid case, inspect the compound recommendations and their metric impacts, expand the reasoning trace, and open an IPCC or FAO source. Then start a new case with only land use to verify that the system asks a targeted clarification instead of producing an unsupported generic answer; adding the requested values continues the same session to a full assessment."
     )
 
     footer = section.footer.paragraphs[0]
