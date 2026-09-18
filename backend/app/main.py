@@ -1,11 +1,15 @@
 """TerraLens AI HTTP application."""
 
+import logging
+import os
 from pathlib import Path
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
+from app.config import cors_origins
 from app.knowledge import KnowledgeStore
 from app.models import ChatRequest, ChatResponse, LandscapeProfile, Scenario
 from app.reasoning import ReasoningEngine
@@ -15,6 +19,7 @@ DATA_PATH = Path(__file__).parents[1] / "data" / "evidence.json"
 knowledge = KnowledgeStore(DATA_PATH)
 engine = ReasoningEngine(knowledge)
 sessions = SessionStore()
+logger = logging.getLogger("terralens")
 
 app = FastAPI(
     title="TerraLens AI",
@@ -23,16 +28,21 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:4173",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:4173",
-    ],
+    allow_origins=cors_origins(os.getenv("TERRALENS_CORS_ORIGINS")),
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Request-ID"],
 )
+
+
+@app.exception_handler(Exception)
+async def unexpected_error(request: Request, exc: Exception) -> JSONResponse:
+    # Log the exception type only; request bodies and stack details stay out of responses.
+    logger.error("Unhandled %s on %s %s", type(exc).__name__, request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "The assessment service encountered an internal error."},
+    )
 
 
 @app.middleware("http")

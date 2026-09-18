@@ -1,0 +1,16 @@
+# Render Blueprint for the TerraLens AI backend (free Docker web service).
+# Render injects PORT; the Dockerfile binds uvicorn to it.
+services:
+  - type: web
+    name: terralens-ai-api
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: TERRALENS_CORS_ORIGINS
+        value: https://hmkz0x00.github.io

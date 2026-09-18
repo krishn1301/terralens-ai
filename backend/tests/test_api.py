@@ -67,3 +67,32 @@ def test_session_can_be_inspected_and_reset():
     assert client.get(f"/api/sessions/{session_id}").status_code == 200
     assert client.delete(f"/api/sessions/{session_id}").status_code == 204
     assert client.get(f"/api/sessions/{session_id}").status_code == 404
+
+
+def test_cors_rejects_unlisted_origin():
+    response = client.options(
+        "/api/scenarios",
+        headers={
+            "Origin": "https://attacker.example.com",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert "access-control-allow-origin" not in response.headers
+
+
+def test_unexpected_errors_return_safe_json_without_internal_details(monkeypatch):
+    from app import main
+
+    def explode(*_args, **_kwargs):
+        raise RuntimeError("secret internal path C:/private/stack")
+
+    monkeypatch.setattr(main.engine, "analyze", explode)
+    safe_client = TestClient(app, raise_server_exceptions=False)
+    response = safe_client.post(
+        "/api/chat",
+        json={"message": "test", "profile": {"land_use": "wheat", "soil_ph": 7, "annual_rainfall_mm": 400}},
+    )
+    assert response.status_code == 500
+    assert response.json() == {"detail": "The assessment service encountered an internal error."}
+    assert "secret" not in response.text
+    assert "Traceback" not in response.text
