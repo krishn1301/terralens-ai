@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 .pytest_cache/
+backend/pytest-cache-files-*/
 *.pyc
 *.db
 frontend/node_modules/
@@ -13,3 +14,4 @@ frontend/vite.config.js
 frontend/vite.config.d.ts
 outputs/
 work/
+submission/rendered/
