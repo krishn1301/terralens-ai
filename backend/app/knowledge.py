@@ -42,7 +42,9 @@ class KnowledgeStore:
                     *record["conditions"],
                 ]
             )
-            self.db.execute("INSERT INTO evidence_fts(id, body) VALUES (?, ?)", (record["id"], body))
+            self.db.execute(
+                "INSERT INTO evidence_fts(id, body) VALUES (?, ?)", (record["id"], body)
+            )
         self.db.commit()
 
     @staticmethod
@@ -74,7 +76,9 @@ class KnowledgeStore:
                     *record["conditions"],
                 ]
             ).lower()
-            hits = sum(1 for term in terms if term.replace("_", " ") in searchable or term in searchable)
+            hits = sum(
+                1 for term in terms if term.replace("_", " ") in searchable or term in searchable
+            )
             metric_hits = sum(2 for metric in record["metrics"] if metric in terms)
             intervention_hits = sum(2 for term in terms if term in interventions)
             condition_hits = sum(1.5 for term in terms if term in conditions)

@@ -65,7 +65,9 @@ class ReasoningEngine:
         if not recommendations:
             recommendations.append(self._diversify(profile, variables))
 
-        evidence_ids = list(dict.fromkeys(eid for rec in recommendations for eid in rec.evidence_ids))
+        evidence_ids = list(
+            dict.fromkeys(eid for rec in recommendations for eid in rec.evidence_ids)
+        )
         evidence = [self.knowledge.get(eid) for eid in evidence_ids]
         completeness = min(len(values) / 7, 1)
         confidence = round(0.58 + 0.25 * completeness + 0.03 * min(len(evidence), 3), 2)
@@ -90,7 +92,9 @@ class ReasoningEngine:
         return Clarification(
             question=f"To connect the pressures, please add {', '.join(labels)}.",
             missing_fields=missing,
-            known_context=[f"{FIELD_LABELS.get(key, key)}: {value}" for key, value in values.items()],
+            known_context=[
+                f"{FIELD_LABELS.get(key, key)}: {value}" for key, value in values.items()
+            ],
         )
 
     @staticmethod
@@ -106,8 +110,16 @@ class ReasoningEngine:
             rationale=f"At {severity:.0f}% fragmentation, movement and gene flow are likely a stronger constraint than local planting alone. Connected native structure also moves pollen and moisture across the landscape.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="habitat fragmentation", direction="decrease", expected_change="target a 10-20 percentage-point reduction in disconnected area"),
-                MetricImpact(metric="species richness", direction="increase", expected_change="monitor occupancy gains over 2-5 breeding seasons"),
+                MetricImpact(
+                    metric="habitat fragmentation",
+                    direction="decrease",
+                    expected_change="target a 10-20 percentage-point reduction in disconnected area",
+                ),
+                MetricImpact(
+                    metric="species richness",
+                    direction="increase",
+                    expected_change="monitor occupancy gains over 2-5 breeding seasons",
+                ),
             ],
             time_horizon="medium",
             confidence=0.86,
@@ -122,8 +134,16 @@ class ReasoningEngine:
             rationale="A layered buffer treats nutrient and sediment runoff while adding cool, connected aquatic and terrestrial habitat. Placement at actual flow paths matters more than uniform planting.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="nutrient pollution", direction="decrease", expected_change="up to 90% unused nitrogen removal is reported under suitable conditions"),
-                MetricImpact(metric="habitat diversity", direction="increase", expected_change="add 2-3 vertical vegetation layers"),
+                MetricImpact(
+                    metric="nutrient pollution",
+                    direction="decrease",
+                    expected_change="up to 90% unused nitrogen removal is reported under suitable conditions",
+                ),
+                MetricImpact(
+                    metric="habitat diversity",
+                    direction="increase",
+                    expected_change="add 2-3 vertical vegetation layers",
+                ),
             ],
             time_horizon="medium",
             confidence=0.84 if profile.pollution_level == "high" else 0.76,
@@ -138,15 +158,25 @@ class ReasoningEngine:
             rationale=f"At pH {profile.soil_ph:.1f}, aluminium toxicity and phosphorus limitation can suppress plants and soil biota. Uniform liming could erase acid-adapted habitat, so spatial targeting protects diversity.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="soil pH", direction="increase", expected_change="move managed zones toward pH 5.5-6.5 after soil testing"),
-                MetricImpact(metric="soil biological activity", direction="increase", expected_change="reassess respiration and earthworms after 6-12 months"),
+                MetricImpact(
+                    metric="soil pH",
+                    direction="increase",
+                    expected_change="move managed zones toward pH 5.5-6.5 after soil testing",
+                ),
+                MetricImpact(
+                    metric="soil biological activity",
+                    direction="increase",
+                    expected_change="reassess respiration and earthworms after 6-12 months",
+                ),
             ],
             time_horizon="short",
             confidence=0.82,
             evidence_ids=["fao-acid-soils", "fao-soil-biodiversity"],
         )
 
-    def _dryland_agroforestry(self, profile: LandscapeProfile, variables: list[str]) -> Recommendation:
+    def _dryland_agroforestry(
+        self, profile: LandscapeProfile, variables: list[str]
+    ) -> Recommendation:
         return Recommendation(
             id="dryland-agroforestry",
             title="Use low-density agroforestry as a water-and-carbon intervention",
@@ -154,9 +184,21 @@ class ReasoningEngine:
             rationale="Low rainfall, depleted carbon, and monoculture reinforce one another: less organic matter reduces infiltration, while uniform cover removes thermal refuges. Sparse woody structure addresses all three without over-consuming water.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="soil organic carbon", direction="increase", expected_change="a roughly one-third long-term increase is a defensible literature benchmark, not a site guarantee"),
-                MetricImpact(metric="habitat diversity", direction="increase", expected_change="add woody, edge, and litter microhabitats within 2-5 years"),
-                MetricImpact(metric="soil moisture", direction="stabilize", expected_change="track dry-season moisture against an untreated control"),
+                MetricImpact(
+                    metric="soil organic carbon",
+                    direction="increase",
+                    expected_change="a roughly one-third long-term increase is a defensible literature benchmark, not a site guarantee",
+                ),
+                MetricImpact(
+                    metric="habitat diversity",
+                    direction="increase",
+                    expected_change="add woody, edge, and litter microhabitats within 2-5 years",
+                ),
+                MetricImpact(
+                    metric="soil moisture",
+                    direction="stabilize",
+                    expected_change="track dry-season moisture against an untreated control",
+                ),
             ],
             time_horizon="long",
             confidence=0.83,
@@ -171,8 +213,16 @@ class ReasoningEngine:
             rationale="A mixed cover interrupts monoculture, feeds soil organisms, protects aggregates, and recycles nutrients. A small controlled pilot limits water-risk where rainfall is low.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="soil organic carbon", direction="increase", expected_change="detectable trend over 2-3 years with annual sampling"),
-                MetricImpact(metric="soil moisture", direction="stabilize", expected_change="reduce bare-soil evaporation between crops"),
+                MetricImpact(
+                    metric="soil organic carbon",
+                    direction="increase",
+                    expected_change="detectable trend over 2-3 years with annual sampling",
+                ),
+                MetricImpact(
+                    metric="soil moisture",
+                    direction="stabilize",
+                    expected_change="reduce bare-soil evaporation between crops",
+                ),
             ],
             time_horizon="medium",
             confidence=0.79,
@@ -187,8 +237,16 @@ class ReasoningEngine:
             rationale="Functional groups affect water, nutrients, habitat structure, and food resources differently; a replicated trial reveals which combination fits this site.",
             contributing_variables=self._vars(variables),
             impacts=[
-                MetricImpact(metric="habitat diversity", direction="increase", expected_change="add at least three functional vegetation groups"),
-                MetricImpact(metric="species richness", direction="increase", expected_change="measure seasonal occupancy against baseline"),
+                MetricImpact(
+                    metric="habitat diversity",
+                    direction="increase",
+                    expected_change="add at least three functional vegetation groups",
+                ),
+                MetricImpact(
+                    metric="species richness",
+                    direction="increase",
+                    expected_change="measure seasonal occupancy against baseline",
+                ),
             ],
             time_horizon="medium",
             confidence=0.68,
@@ -196,22 +254,42 @@ class ReasoningEngine:
         )
 
     @staticmethod
-    def _trace(profile: LandscapeProfile, recommendations: list[Recommendation]) -> list[ReasoningStep]:
+    def _trace(
+        profile: LandscapeProfile, recommendations: list[Recommendation]
+    ) -> list[ReasoningStep]:
         present = profile.populated_fields()
         return [
-            ReasoningStep(label="Observe", explanation=f"Used {len(present)} supplied landscape variables; no missing value was imputed."),
-            ReasoningStep(label="Connect", explanation="Matched interacting soil, water, habitat, climate, and human-pressure signals rather than scoring each in isolation."),
-            ReasoningStep(label="Retrieve", explanation=f"Selected evidence for {len(recommendations)} interventions from the local indexed corpus."),
-            ReasoningStep(label="Prioritize", explanation="Ranked actions by ecological constraint, reversibility, co-benefits, and evidence fit."),
+            ReasoningStep(
+                label="Observe",
+                explanation=f"Used {len(present)} supplied landscape variables; no missing value was imputed.",
+            ),
+            ReasoningStep(
+                label="Connect",
+                explanation="Matched interacting soil, water, habitat, climate, and human-pressure signals rather than scoring each in isolation.",
+            ),
+            ReasoningStep(
+                label="Retrieve",
+                explanation=f"Selected evidence for {len(recommendations)} interventions from the local indexed corpus.",
+            ),
+            ReasoningStep(
+                label="Prioritize",
+                explanation="Ranked actions by ecological constraint, reversibility, co-benefits, and evidence fit.",
+            ),
         ]
 
     @staticmethod
     def _caveats(profile: LandscapeProfile) -> list[str]:
-        caveats = ["Ranges are planning benchmarks; confirm them with a local baseline and untreated comparison area."]
+        caveats = [
+            "Ranges are planning benchmarks; confirm them with a local baseline and untreated comparison area."
+        ]
         if profile.region is None:
-            caveats.append("Region was not supplied, so species and planting-calendar choices require local validation.")
+            caveats.append(
+                "Region was not supplied, so species and planting-calendar choices require local validation."
+            )
         if profile.species_richness is None:
-            caveats.append("No species baseline was supplied; complete a seasonal inventory before claiming biodiversity gains.")
+            caveats.append(
+                "No species baseline was supplied; complete a seasonal inventory before claiming biodiversity gains."
+            )
         return caveats
 
     @staticmethod

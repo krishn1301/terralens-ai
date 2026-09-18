@@ -2,7 +2,6 @@ from pathlib import Path
 
 from app.knowledge import KnowledgeStore
 
-
 DATA = Path(__file__).parents[1] / "data" / "evidence.json"
 
 

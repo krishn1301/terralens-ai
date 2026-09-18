@@ -4,7 +4,6 @@ from app.knowledge import KnowledgeStore
 from app.models import LandscapeProfile
 from app.reasoning import ReasoningEngine
 
-
 DATA = Path(__file__).parents[1] / "data" / "evidence.json"
 
 
@@ -30,7 +29,9 @@ def test_semi_arid_monoculture_combines_carbon_rainfall_and_land_use():
     )
     assessment = engine().analyze(profile, "How can I reverse biodiversity decline?").assessment
     assert assessment is not None
-    agroforestry = next(item for item in assessment.recommendations if item.id == "dryland-agroforestry")
+    agroforestry = next(
+        item for item in assessment.recommendations if item.id == "dryland-agroforestry"
+    )
     assert len(agroforestry.contributing_variables) >= 3
     assert any(impact.metric == "soil organic carbon" for impact in agroforestry.impacts)
     assert "ipcc-agroforestry-resilience" in agroforestry.evidence_ids
@@ -44,7 +45,9 @@ def test_acidic_wet_land_recommends_test_led_ph_restoration():
         soil_moisture_pct=68,
         species_richness=7,
     )
-    assessment = engine().analyze(profile, "The soil is acidic and plant diversity is low").assessment
+    assessment = (
+        engine().analyze(profile, "The soil is acidic and plant diversity is low").assessment
+    )
     assert any(item.id == "acid-soil-restoration" for item in assessment.recommendations)
 
 
