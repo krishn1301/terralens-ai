@@ -13,4 +13,4 @@ services:
     autoDeploy: true
     envVars:
       - key: TERRALENS_CORS_ORIGINS
-        value: https://krishn1301.github.io,https://hmkz0x00.github.io
+        value: https://krishn1301.github.io
